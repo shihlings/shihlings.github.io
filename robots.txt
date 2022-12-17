@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /deprecated/
+Disallow: /template/
+Disallow: /microcontroller/template/
+Sitemap: https://shihlings.github.io/sitemap.xml
