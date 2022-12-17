@@ -3,11 +3,13 @@ This site is created using templates provided by [HTML5 UP](http://html5up.net).
 
 ## Repository Management
 ### Branch Hierarchy
-<b>All changes should be commited to 'staging', not 'main'.</b>
-Automation will generate sitemap and update the branch when a push to 'staging' is detected. Once verified and validated, create a pull request to 'main' and push. The website will be published automatically once pushed to 'main'.
+<b>All changes should be commited to 'staging', not 'main'.</b> Automation will generate sitemap and update the branch when a push to 'staging' is detected. Once verified and validated, create a pull request to 'main' and push. The website will be published automatically once pushed to 'main'.
+
+### Branch Protetion
+'main' and 'staging' are protected and cannot be deleted.
 
 ### Commit Signing and Verification
-Commits after December 15th, 2022 are signed and verified, including bot automations for sitemap generation. Previous commits remain unchanged, unsigned, and unverified. Please ignore unverified tags for commits before December 15th, 2022.
+All commits made on or after Decmeber 15th, 2022 to this repository are required to be signed. Any unsigned commits will be blocked.
 
 ## Readme for the Strata Website Template
 
