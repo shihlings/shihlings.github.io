@@ -7,7 +7,8 @@ This site is created using templates provided by [HTML5 UP](http://html5up.net).
 
 ### Branch Protetion
 'main' and 'staging' are protected and cannot be deleted.
-#### Commit Signing and Verification
+
+### Commit Signing and Verification
 All commits made on or after Decmeber 15th, 2022 to this repository are required to be signed. Any unsigned commits will be blocked.
 
 ## Readme for the Strata Website Template
