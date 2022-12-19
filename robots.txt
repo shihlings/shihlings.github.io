@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /sitemap
 Disallow: /deprecated/*
 Disallow: /template/*
 Disallow: /microcontroller/template/*
