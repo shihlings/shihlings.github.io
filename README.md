@@ -46,3 +46,6 @@ Credits:
 	Other:
 		jQuery (jquery.com)
 		Responsive Tools (github.com/ajlkn/responsive-tools)
+        
+## Acknowlegements
+1. [404 Error Page](https://shihlings.github.io/404.html) is sourced from [tsparticles/404-templates](https://github.com/tsparticles/404-templates).
