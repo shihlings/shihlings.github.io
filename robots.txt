@@ -3,4 +3,8 @@ Disallow: /deprecated
 Disallow: /template
 Disallow: /404
 Disallow: /microcontroller
+Disallow: /explore-microcontroller/template
+Disallow: /explore-microcontroller/404
+Disallow: /explore-microcontroller/modules
+Sitemap: https://shihlings.github.io/explore-microcontroller/sitemap.xml
 Sitemap: https://shihlings.github.io/sitemap.xml
