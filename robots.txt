@@ -4,6 +4,7 @@ Disallow: /template
 Disallow: /404
 Disallow: /microcontroller
 Disallow: /appendices
+Disallow: /modules
 Disallow: /explore-microcontroller/template
 Disallow: /explore-microcontroller/404
 Disallow: /explore-microcontroller/modules
