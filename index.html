@@ -12,18 +12,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <meta name="google-site-verification" content="dk3cNNReQ-btJU8wFE7mo0misRWJ9hzVexTOTFoCya8" />
 		<link rel="stylesheet" href="https://shihlings.github.io/assets/css/main.css" />
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 	</head>
 	<body class="is-preload">
 
 		<!-- Header -->
 			<header id="header">
-				<div class="inner">
-					<center><a href="#" class="image avatar"><img src="images/photo.jpeg" alt="" /></a></center>
-					<center><h1><strong>Shih-Ling Shen</strong></h1></center>
-                    <i><center><p>they / them / theirs</p></center></i>
-                    <center><h4>UBC Engineering Student</h4></center>
-                    <center><h4><a href="appendices/resume.pdf"  target="_blank">Open Resume in New Tab</a></h4></center>
-				</div>
+                <div id="header-placeholder"></div>
 			</header>
 
 		<!-- Main -->
@@ -108,40 +103,14 @@
                     
 				<!-- Four -->
 					<section id="four">
-						<h2>Get In Touch</h2>
-						<p>Connect with me on social media or via email.</p>
-							<div class="col-4 col-12-small">
-								<ul class="labeled-icons">
-									<li>
-										<h3 class="icon brands fa-github"><span class="label">Github</span></h3>
-                                        <a href="https://github.com/shihlings" target="_blank">GitHub Profile</a>
-                                    </li>
-									<li>
-										<h3 class="icon brands fa-linkedin"><span class="label">Phone</span></h3>
-										<a href="https://www.linkedin.com/in/shih-ling-shen" target="_blank">LinkedIn Profile</a>
-									</li>
-									<li>
-										<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
-										<a href="mailto:shihling@student.ubc.ca" target="_blank">shihling@student.ubc.ca</a>
-									</li>
-								</ul>
-							</div>
-						</div>
+                        <div class="inner" id="social-placeholder">
 					</section>
 			</div>
 
 		<!-- Footer -->
 			<footer id="footer">
-				<div class="inner">
-					<ul class="icons">
-                        <li><a href="https://github.com/shihlings" class="icon brands fa-github" target="_blank"><span class="label">Github</span></a></li>
-                        <li><a href="https://www.linkedin.com/in/shih-ling-shen" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
-						<li><a href="mailto:shihling@student.ubc.ca" class="icon solid fa-envelope" target="_blank"><span class="label">Email</span></a></li>
-					</ul>
-					<ul class="copyright">
-						<li>&copy; <script>document.write(new Date().getFullYear())</script> Shih-Ling. </li><li>Website Template: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
-					</ul>
-				</div>
+                <div class="inner" id="footer-placeholder">
+                </div>
 			</footer>
 
 		<!-- Scripts -->
@@ -151,14 +120,13 @@
 			<script src="https://shihlings.github.io/assets/js/breakpoints.min.js"></script>
 			<script src="https://shihlings.github.io/assets/js/util.js"></script>
 			<script src="https://shihlings.github.io/assets/js/main.js"></script>
-            <!-- Google tag (gtag.js) -->
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDQX87FQS4"></script>
+            
+            <!-- Inject Additional Scripts -->
+            <div id="scripts-placeholder"></div>
             <script>
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'G-MDQX87FQS4');
+            $(function(){
+              $("#scripts-placeholder").load("https://shihlings.github.io/explore-microcontroller/modules/scripts.html");
+            });
             </script>
 	</body>
 </html>
