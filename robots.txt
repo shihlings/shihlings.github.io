@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /deprecated
+Disallow: /404
+Disallow: /modules
+Disallow: /assets
+Disallow: /explore-microcontroller/modules
+Disallow: /explore-microcontroller/assets
+Sitemap: https://shihlings.github.io/sitemap.xml
