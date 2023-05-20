@@ -63,24 +63,6 @@
                 background-color: #008CBA;
                 color: white;
             }
-
-        .container1 {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
-        }
-
-        /* Then style the iframe to fit in the container div with full height and width */
-        .responsive-iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-        }
     </style>
 </head>
 
@@ -120,10 +102,13 @@
                     <div class="col-lg-8">
                         <div class="section-title">
                             <h3>e-Poster</h3>
-                            <div id="vid-placeholder"></div>
+                            <p>
+                                Our e-Poster is available in two formats, .mp4 (Video) and .ppsx (PowerPoint Slideshow):
+                            </p>                            
                             <br />
                             <center>
-                                <a href="https://shihlings.github.io/media/claw/eposter.ppsx" target="_blank" class="button button2">Download e-Poster as .ppsx File (Open in PowerPoint)</a>
+                                <a href="https://shihlings.github.io/media/claw/eposter.mp4" target="_blank" class="button button2">.mp4 Video</a>
+                                <a href="https://shihlings.github.io/media/claw/eposter.ppsx" target="_blank" class="button button2">.ppsx File (Open in PowerPoint)</a>
                             </center>
                         </div>
                             <div class="section-title">
@@ -293,11 +278,6 @@
     <script>
         $(function () {
             $("#scripts-placeholder").load("https://shihlings.github.io/modules/scripts.html");
-        });
-    </script>
-    <script>
-        $(function () {
-            $("#vid-placeholder").load("https://shihlings.github.io/modules/claw_vid_load.html");
         });
     </script>
 </body>
