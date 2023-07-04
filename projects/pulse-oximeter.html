@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Exploring the Potentials of a Microcontroller - Portfolio - Shih-Ling Shen</title>
+    <title>Heart Rate and Pulse Oximeter - Portfolio - Shih-Ling Shen</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -37,6 +37,33 @@
     <!-- Custom Scripts and Tags -->
     <meta name="google-site-verification" content="dk3cNNReQ-btJU8wFE7mo0misRWJ9hzVexTOTFoCya8" />
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <!-- Custom Button Style -->
+    <style>
+        .button {
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .button2 {
+            background-color: white;
+            color: black;
+            border: 2px solid #008CBA;
+        }
+
+            .button2:hover {
+                background-color: #008CBA;
+                color: white;
+            }
+    </style>
 </head>
 
 <body>
@@ -58,10 +85,10 @@
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Portfolio Details - Exploring the Potentials of a Microcontroller</h2>
+                    <h2>Portfolio Details - Pulse Oximeter</h2>
                     <ol>
                         <li><a href="https://shihlings.github.io/index.html">Home</a></li>
-                        <li>Exploring the Potentials of a Microcontroller</li>
+                        <li>Pulse Oximeter</li>
                     </ol>
                 </div>
 
@@ -70,42 +97,58 @@
         <!-- ======= Portfolio Details Section ======= -->
         <section id="portfolio-details" class="portfolio-details">
             <div class="container">
-
                 <div class="row gy-4">
-
                     <div class="col-lg-8">
                         <div class="portfolio-details-slider swiper">
-                            <img src="https://shihlings.github.io/media/microcontroller/microcontroller.jpg" alt="">
+                            <img src="https://shihlings.github.io/media/pulse-oximeter/sample.jpg" alt="">
+                        </div>
+                        <br />
+
+                        <!--
+                        <div class="section-title">
+                            <h3>e-Poster</h3>
+                            <p>
+                                Our e-Poster is available in two formats, .mp4 (Video) and .ppsx (PowerPoint Slideshow):
+                            </p>                            
+                            <br />
+                            <center>
+                                <a href="https://shihlings.github.io/media/claw/eposter.mp4" target="_blank" class="button button2">.mp4 Video</a>
+                                <a href="https://shihlings.github.io/media/claw/eposter.ppsx" target="_blank" class="button button2">.ppsx File (Open in PowerPoint)</a>
+                            </center>
+                        </div>
+                        -->
+
+                        <div class="section-title">
+                            <h3>Source Code</h3>
+                            <p>
+                                The code used in this project is stored on GitHub in <a href="https://github.com/shihlings/pulse-oximeter" target="_blank">shihlings/pulse-oximeter</a>.
+                            </p>
+                            <center>
+                                <br />
+                                <a href="https://github.com/shihlings/pulse-oximeter" target="_blank" class="button button2">Open our repository in GitHub</a>
+                            </center>
                         </div>
                     </div>
 
                     <div class="col-lg-4">
-
                         <div class="portfolio-info">
                             <h3>Project information</h3>
                             <ul>
-                                <li><strong>Category</strong>: Grade 12 Capstone Project</li>
-                                <li><strong>Time</strong>: September 2021 - January 2022</li>
-                                <li><strong>Project URL</strong>: <a href="https://shihlings.github.io/explore-microcontroller" target="_blank">shihlings.github.io/explore-microcontroller</a></li>
+                                <li><strong>Category</strong>: Personal Project</li>
+                                <li><strong>Time</strong>: June 2023 - Current</li>
                             </ul>
                         </div>
 
                         <div class="portfolio-description">
-                            <h2>
-                                Grade 12 Capstone Project - Exploring the Potentials of a Microcontroller
-                            </h2>
+                            <h2>Portfolio Details - Pulse Oximeter</h2>
                             <p>
-                                A self-directed project exploring the potential applications of a microcontroller using a Raspberry Pi Pico as a personal introduction to hardware computing.
+                                A personal project to design and program heart rate and pulse oximeter using an ESP32 Dev Board, a MAX30105 sensor, a push button, and an OLED Display.
                             </p>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
         </section><!-- End Portfolio Details Section -->
-
     </main><!-- End #main -->
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -136,7 +179,6 @@
             $("#scripts-placeholder").load("https://shihlings.github.io/modules/scripts.html");
         });
     </script>
-
 </body>
 
 </html>
