@@ -36,9 +36,9 @@
 
 					// Images (in the format of 'url': 'alignment').
 						images: {
-							'images/bg01.jpg': 'center',
-							'images/bg02.jpg': 'center',
-							'images/bg03.jpg': 'center'
+							'https://shihlings.github.io/404/images/bg01.jpg': 'center',
+							'https://shihlings.github.io/404/images/bg02.jpg': 'center',
+							'https://shihlings.github.io/404/images/bg03.jpg': 'center'
 						},
 
 					// Delay.
