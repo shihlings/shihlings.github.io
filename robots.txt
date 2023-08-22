@@ -4,7 +4,7 @@ Disallow: /404
 Disallow: /modules
 Disallow: /old
 Disallow: /assets
-Disallow: /projects
+Disallow: /project
 Disallow: /forms
 Disallow: /explore-microcontroller/modules
 Disallow: /explore-microcontroller/assets
