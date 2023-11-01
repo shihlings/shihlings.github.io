@@ -71,6 +71,6 @@ jobs:
     - name: Approve Pull Request
       if: ${{ steps.cpr.outputs.pull-request-number }}
       run: |
-        gh pr merge sitemap-update --merge
+        gh pr merge sitemap-update --squash
       env:
         GH_TOKEN: ${{ secrets.TOKEN_PR_APPROVAL }}
