@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://shihling.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://shihling.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-04-11T23:47:33+01:00</updated><id>https://shihling.com/feed.xml</id><title type="html">Shih-Ling Shen</title><subtitle>Shih-Ling&apos;s Personal Website.
+</subtitle><entry><title type="html">Setting up VMware Workstation on Debian/Ubuntu</title><link href="https://shihling.com/blog/2026/vmware-workstation" rel="alternate" type="text/html" title="Setting up VMware Workstation on Debian/Ubuntu" /><published>2026-02-06T00:00:00+00:00</published><updated>2026-04-11T00:00:00+01:00</updated><id>https://shihling.com/blog/2026/vmware-workstation</id><content type="html" xml:base="https://shihling.com/blog/2026/vmware-workstation"><![CDATA[<h2 id="downloading-and-installing-vmware-workstation">Downloading and Installing VMware Workstation</h2>
+
+<p>Visit <a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion" target="_blank">VMware Workstation official webpage</a> and click on download now under VMware Workstation Pro for PC. This will take you to Broadcom’s support centre.</p>
+
+<p>Click on “Free Software Downloads available HERE” underneath the search box.</p>
+
+<p>Click on “VMware Workstation Pro” near the bottom of the page.</p>
+
+<p>Select the desired version, and download the .bundle file. Note that you may be prompted to agree to the Terms and Conditions and have to fill in contact information and address.</p>
+
+<p>Run the following command to install VMware Workstation. This example uses the 25H2u1 version, replace the filename with your own.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> ./VMware-Workstation-Full-25H2u1-25219725.x86_64.bundle
+</code></pre></div></div>
+
+<p>Follow the prompts to install.</p>
+
+<hr />
+
+<h2 id="building-vmware-host-modules">Building VMware Host Modules</h2>
+
+<p>VMware Workstation requires two kernel modules (vmmon and vmnet) to be compiled against the current kernel to function. When VMware Workstation starts up and detects that these two kernel modules are not loaded, it will prompt you to compile and install it.</p>
+
+<p>If the automatic installation fails, it is possible to manually install it with the tarballs that ship with the VMware Workstation. This can also be found in the <a href="https://wiki.debian.org/VMware" target="_blank">VMware page in the Debian Wiki</a>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su root <span class="c"># need to have root previlige to modify system files</span>
+<span class="nb">cd</span> /usr/lib/vmware/modules/source
+<span class="nb">tar </span>xvf vmnet.tar
+<span class="nb">cd </span>vmnet-only
+make
+<span class="nb">cd</span> ..
+<span class="nb">tar </span>xvf vmmon.tar
+<span class="nb">cd </span>vmmon-only
+make
+<span class="nb">cd</span> ..
+<span class="nb">cp </span>vmmon.o /lib/modules/<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/kernel/drivers/misc/vmmon.ko
+<span class="nb">cp </span>vmnet.o /lib/modules/<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/kernel/drivers/misc/vmnet.ko
+<span class="nb">sudo </span>depmod <span class="nt">-a</span>
+</code></pre></div></div>
+
+<p>Finally, reboot your device and VMware Workstation should detect the modules are loaded.</p>
+
+<p><strong>Note:</strong> The two modules may need to be re-compiled and re-installed everytime the kernel is updated.</p>
+
+<hr />
+
+<h2 id="secure-boot-only-signing-the-vmware-host-modules">(Secure Boot Only) Signing the VMware Host Modules</h2>
+
+<p>When Secure Boot is enabled, the self-built kernel modules will not load. To fix this, the kernel modules must be signed with a openssl key. This is documented in a <a href="https://knowledge.broadcom.com/external/article?legacyId=2146460" target="_blank">Broadcom Support article</a>.</p>
+
+<p>To sign the modules, first create a keypair using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl req <span class="nt">-new</span> <span class="nt">-x509</span> <span class="nt">-newkey</span> rsa:2048 <span class="nt">-keyout</span> MOK.priv <span class="nt">-outform</span> DER <span class="nt">-out</span> MOK.der <span class="nt">-nodes</span> <span class="nt">-days</span> 36500 <span class="nt">-subj</span> <span class="s2">"/CN=VMware/"</span>
+</code></pre></div></div>
+
+<p>Next, import the key to the MOK list using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mokutil <span class="nt">--import</span> MOK.der
+</code></pre></div></div>
+
+<p>Sign the two modules using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> /usr/src/linux-headers-<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/scripts/sign-file sha256 ./MOK.priv ./MOK.der <span class="si">$(</span>modinfo <span class="nt">-n</span> vmmon<span class="si">)</span>
+<span class="nb">sudo</span> /usr/src/linux-headers-<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/scripts/sign-file sha256 ./MOK.priv ./MOK.der <span class="si">$(</span>modinfo <span class="nt">-n</span> vmnet<span class="si">)</span>
+</code></pre></div></div>
+
+<p>After rebooting, the kernel module should be loaded and VMware Workstation should work as expected.</p>
+
+<p><strong>Note:</strong> Only the final step need to be repeated everytime the kernel modules are re-compiled and re-installed.</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Blog" /><summary type="html"><![CDATA[Instructions on installing VMware Workstation and building the host modules on an Debian/Ubuntu machine.]]></summary></entry><entry><title type="html">UBC Sailbot</title><link href="https://shihling.com/portfolio/2024/UBC-Sailbot" rel="alternate" type="text/html" title="UBC Sailbot" /><published>2024-12-31T00:00:00+00:00</published><updated>2025-01-02T00:00:00+00:00</updated><id>https://shihling.com/portfolio/2024/UBC-Sailbot</id><content type="html" xml:base="https://shihling.com/portfolio/2024/UBC-Sailbot"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Engineering Design Team</li>
+  <li><strong>Time:</strong> Sep 2022 - Dec 2024</li>
+  <li><strong>Current Position:</strong> Electrical Team Lead</li>
+  <li><strong>Previous Positions:</strong>
+    <ul>
+      <li>Electrical Team Communication Systems Project Lead (Aug 2023 - Mar 2024)</li>
+      <li>Electrical Team Member - Communication Systems (Sep 2022 - Aug 2023)</li>
+    </ul>
+  </li>
+  <li><strong>Project Website:</strong> <a href="https://www.ubcsailbot.org" target="_blank">www.ubcsailbot.org</a></li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A student design team at the University of British Columbia focusing on the design and construction of autonomous sailboats. We are currently building a fully autonomous research vessel from scratch to collect oceanic and atmospheric data in extreme environments for marine researchers. For more information about my role at UBC Sailbot, please visit <a href="/resume">the resume section</a>.</p>
+
+<h2 id="photo-gallery">Photo Gallery</h2>
+<p style="text-align:center;"><img src="/portfolio/assets/sailbot/team24.jpg" alt="Full Team Photo (March 2024)" />
+Full Team Photo (March 2024)</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/sailbot/elec24.jpg" alt="Electrical Sub-Team Photo (March 2024)" />
+Electrical Sub-Team Photo (March 2024)</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/sailbot/leads24.jpg" alt="Leads Team Photo (March 2024)" />
+Leads Team Photo (March 2024)</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/sailbot/team.jpg" alt="Full Team Photo (October 2022)" />
+Full Team Photo (October 2022)</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/sailbot/elec.jpg" alt="Electrical Sub-Team Photo (October 2022)" />
+Electrical Sub-Team Photo (October 2022)</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2024-project" /><category term="2023-project" /><category term="2022-project" /><category term="design-team" /><summary type="html"><![CDATA[A student design team at the University of British Columbia focusing on the design and construction of autonomous sailboats. We are currently building a fully autonomous research vessel from scratch to collect oceanic and atmospheric data in extreme environments for marine researchers. For more information about my role at UBC Sailbot, please visit the resume section.]]></summary></entry><entry><title type="html">Waveform Generator and Music Player</title><link href="https://shihling.com/portfolio/2024/waveform-generator-and-music-player" rel="alternate" type="text/html" title="Waveform Generator and Music Player" /><published>2024-06-19T00:00:00+01:00</published><updated>2024-07-29T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2024/waveform-generator-and-music-player</id><content type="html" xml:base="https://shihling.com/portfolio/2024/waveform-generator-and-music-player"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> CPEN 311</li>
+  <li><strong>Time:</strong> Jun 2024</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A GUI application written in HDL that serves as a music player and a waveform generator with various modulations at the same time. More details to be added.</p>
+
+<h2 id="source-code">Source Code</h2>
+<p>The code used in this project is stored on GitHub in <a href="https://github.com/shihlings/de1-media-waveform" target="_blank">shihlings/de1-media-waveform</a>. <a href="https://github.com/shihlings/de1-media-waveform" target="_blank">Open the repository in GitHub</a>.</p>
+
+<h2 id="videos">Videos</h2>
+<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style>
+<div class="embed-container">    <iframe title="YouTube video player" width="640" height="390" src="//www.youtube.com/embed/Og3QaxsnCPw" frameborder="0" allowfullscreen=""></iframe></div>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2024-project" /><category term="course-project" /><summary type="html"><![CDATA[A GUI application written in HDL that serves as a music player and a waveform generator with various modulations at the same time.]]></summary></entry><entry><title type="html">RC4 Decoder</title><link href="https://shihling.com/portfolio/2024/rc4-decoder" rel="alternate" type="text/html" title="RC4 Decoder" /><published>2024-06-12T00:00:00+01:00</published><updated>2024-07-29T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2024/rc4-decoder</id><content type="html" xml:base="https://shihling.com/portfolio/2024/rc4-decoder"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> CPEN 311</li>
+  <li><strong>Time:</strong> Jun 2024</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>This hardware accelerator is written with VHDL and SystemVerilog for the DE1-SoC board. It is highly modular and the number of cores can be reconfigured easily with a change of 1 parameter. Overall, it can decrypt RC4-encrypted 32 byte messages with a 24-bit secret key within 1 second using a 64-core configuration.</p>
+
+<h2 id="source-code">Source Code</h2>
+<p>The code used in this project is stored on GitHub in <a href="https://github.com/shihlings/rc4-decoder" target="_blank">shihlings/rc4-decoder</a>. <a href="https://github.com/shihlings/rc4-decoder" target="_blank">Open the repository in GitHub</a>.</p>
+
+<h2 id="videos">Videos</h2>
+<p>To be added soon.</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2024-project" /><category term="course-project" /><summary type="html"><![CDATA[A bruteforce hardware decode accelerator for RC4 encryption in VHDL and SystemVerilog.]]></summary></entry><entry><title type="html">Whac-a-Mole Game</title><link href="https://shihling.com/portfolio/2023/apsc-160-ta-wam" rel="alternate" type="text/html" title="Whac-a-Mole Game" /><published>2023-12-01T00:00:00+00:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2023/apsc-160-ta-wam</id><content type="html" xml:base="https://shihling.com/portfolio/2023/apsc-160-ta-wam"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Job Project - Teaching Assistant</li>
+  <li><strong>Course:</strong> APSC 160</li>
+  <li><strong>Time:</strong> Nov 2023 - Dec 2023</li>
+  <li><strong>Project URL:</strong> <a href="https://www.tinkercad.com/things/6QM0G7LIEss-apsc-160-lab-8-template-whack-a-mole" target="_blank">www.tinkercad.com/things/6QM0G7LIEss-apsc-160-lab-8-template-whack-a-mole</a></li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A laboratory to design a resilient and highly responsive Arduino Sketch for a Whac-a-Mole Game that dynamically escalates in complexity with each successive round, enhancing the challenge for players. As a Teaching Assistant for this course, I developed the framework and coded a example for demonstration in class.</p>
+
+<h2 id="demo-video">Demo Video</h2>
+<center><div class="embed-container">
+  <video src="https://media.shihling.com/portfolio/wam-game/wam-demo.mp4" width="95%" frameborder="0" allowfullscreen="true" controls="true" allow="autoplay; encrypted-media" type="video/mp4">
+  </video><br />
+  The simulator is not publicly available to prevent academic misconduct. Please contact me through email to learn more about this project. The template developed for this lab is avaliable publicly using <a href="https://www.tinkercad.com/things/6QM0G7LIEss-apsc-160-lab-8-template-whack-a-mole" target="_blank">this link</a>.
+</div></center>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2023-project" /><category term="job-project" /><summary type="html"><![CDATA[A laboratory to design a resilient and highly responsive Arduino Sketch for a Whac-a-Mole Game that dynamically escalates in complexity with each successive round, enhancing the challenge for players. As a Teaching Assistant for this course, I developed the framework and coded a example for demonstration in class.]]></summary></entry><entry><title type="html">Pulse Oximeter</title><link href="https://shihling.com/portfolio/2023/pulse-oximeter" rel="alternate" type="text/html" title="Pulse Oximeter" /><published>2023-08-31T00:00:00+01:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2023/pulse-oximeter</id><content type="html" xml:base="https://shihling.com/portfolio/2023/pulse-oximeter"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Personal Project</li>
+  <li><strong>Time:</strong> Jun 2023 - Aug 2023 (Paused)</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A personal project to design and programme an ESP32 Dev Board, a MAX30102 sensor, a push button, and an OLED Display to measure heart rate and SpO2.</p>
+
+<h2 id="source-code">Source Code</h2>
+<p>The code used in this project is stored on GitHub in <a href="https://github.com/shihlings/pulse-oximeter" target="_blank">shihlings/pulse-oximeter</a>. <a href="https://github.com/shihlings/pulse-oximeter" target="_blank">Open the repository in GitHub</a>.</p>
+
+<h2 id="photo-gallery">Photo Gallery</h2>
+
+<p style="text-align:center;"><img src="/portfolio/assets/pulse-oximeter/sample.jpg" alt="Pulse Oximeter Demo" />
+Pulse Oximeter Demo</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2023-project" /><category term="personal-project" /><summary type="html"><![CDATA[A personal project to design and programme an ESP32 Dev Board, a MAX30102 sensor, a push button, and an OLED Display to measure heart rate and SpO2.]]></summary></entry><entry><title type="html">Autonomous Claw</title><link href="https://shihling.com/portfolio/2023/apsc-101-claw" rel="alternate" type="text/html" title="Autonomous Claw" /><published>2023-02-16T00:00:00+00:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2023/apsc-101-claw</id><content type="html" xml:base="https://shihling.com/portfolio/2023/apsc-101-claw"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> APSC 101</li>
+  <li><strong>Time:</strong> Jan 2023 - Feb 2023</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A group project to design, craft, and programme an autonomous claw powered by an Arduino Uno to retrieve objects in locations where human access is difficult.</p>
+
+<h2 id="source-code">Source Code</h2>
+<p>Our code is stored on GitHub in <a href="https://github.com/shihlings/apsc101" target="_blank">shihlings/apsc101</a>. <a href="https://github.com/shihlings/apsc101" target="_blank">Open our repository in GitHub</a>.</p>
+
+<h2 id="e-poster">e-Poster</h2>
+<p>Our e-Poster is available in two formats, <a href="https://media.shihling.com/portfolio/claw/eposter.mp4" target="_blank">.mp4 (Video)</a> and <a href="https://media.shihling.com/portfolio/claw/eposter.ppsx" target="_blank">.ppsx (PowerPoint Slideshow)</a>.</p>
+<center><div class="embed-container">
+  <video src="https://media.shihling.com/portfolio/claw/eposter.mp4" width="95%" frameborder="0" allowfullscreen="true" controls="true" allow="autoplay; encrypted-media" type="video/mp4">
+  </video><br />
+</div></center>
+
+<h2 id="photo-gallery">Photo Gallery</h2>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/group_photo.jpg" alt="Team U-1 Photo" />
+Team U-1 Photo</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/concept.png" alt="Isometric Sketch" />
+Isometric Sketch</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/eng_drawing.jpg" alt="Full Engineering Drawing" />
+Full Engineering Drawing</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/claw_fabrication.jpg" alt="Week 3 Studio - Claw Fabrication" />
+Week 3 Studio - Claw Fabrication</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/week3.jpg" alt="End of Week 3 Studio - 80% Complete Claw" />
+End of Week 3 Studio - 80% Complete Claw</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/final_claw.jpg" alt="Week 4 Studio - Claw Complete" />
+Week 4 Studio - Claw Complete</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/claw/software_prototype.png" alt="Software Simulation Prototype" />
+Software Simulation Prototype</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2023-project" /><category term="course-project" /><summary type="html"><![CDATA[A group project to design, craft, and programme an autonomous claw powered by an Arduino Uno to retrieve objects in locations where human access is difficult.]]></summary></entry><entry><title type="html">Simon Game</title><link href="https://shihling.com/portfolio/2022/apsc-160-simon-game" rel="alternate" type="text/html" title="Simon Game" /><published>2022-12-01T00:00:00+00:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2022/apsc-160-simon-game</id><content type="html" xml:base="https://shihling.com/portfolio/2022/apsc-160-simon-game"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> APSC 160</li>
+  <li><strong>Time:</strong> Nov 2022 - Dec 2022</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A laboratory to design a resilient and highly responsive Arduino Sketch for a Simon Game that dynamically escalates in complexity with each successive round, enhancing the challenge for players.</p>
+
+<h2 id="demo-video">Demo Video</h2>
+<center><div class="embed-container">
+  <video src="https://media.shihling.com/portfolio/simon-game/simon_demo.mp4" width="95%" frameborder="0" allowfullscreen="true" controls="true" allow="autoplay; encrypted-media" type="video/mp4">
+  </video><br />
+  The simulator is not publicly available to prevent academic misconduct. Please contact me through email to learn more about this project.
+</div></center>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2022-project" /><category term="course-project" /><summary type="html"><![CDATA[A laboratory to design a resilient and highly responsive Arduino Sketch for a Simon Game that dynamically escalates in complexity with each successive round, enhancing the challenge for players.]]></summary></entry><entry><title type="html">Cardboard Chair</title><link href="https://shihling.com/portfolio/2022/apsc-100-chair" rel="alternate" type="text/html" title="Cardboard Chair" /><published>2022-10-13T00:00:00+01:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2022/apsc-100-chair</id><content type="html" xml:base="https://shihling.com/portfolio/2022/apsc-100-chair"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> APSC 100</li>
+  <li><strong>Time:</strong> Sep 2022 - Oct 2022</li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A group project to design and build a family-friendly chair using a single piece of 48” x 48” cardboard for the use in evacuation centres.</p>
+
+<h2 id="poster">Poster</h2>
+<p>The full poster is available in <a href="https://media.shihling.com/portfolio/cardboard-chair/poster.pdf" target="_blank">.pdf format here</a>.</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/poster.jpg" alt="Poster" /></p>
+
+<h2 id="photo-gallery">Photo Gallery</h2>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/final_chair_left.jpeg" alt="Final Chair - Left" />
+Final Chair - Left</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/final_chair_right.jpeg" alt="Final Chair - Right" />
+Final Chair - Right</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/initial_prototype.jpeg" alt="Initial Prototype" />
+Initial Prototype</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/refined_prototype.jpeg" alt="Refined Prototype" />
+Refined Prototype</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/final_prototype.jpg" alt="Final Prototype" />
+Final Prototype</p>
+
+<p style="text-align:center;"><img src="/portfolio/assets/cardboard-chair/completed_chair.jpg" alt="Complete Chair" />
+Complete Chair</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2022-project" /><category term="course-project" /><summary type="html"><![CDATA[A group project to design and build a family-friendly chair using a single piece of 48" x 48" cardboard for the use in evacuation centres.]]></summary></entry><entry><title type="html">Grade 12 Capstone - Exploring the Potentials of a Microcontroller</title><link href="https://shihling.com/portfolio/2022/hscapstone" rel="alternate" type="text/html" title="Grade 12 Capstone - Exploring the Potentials of a Microcontroller" /><published>2022-01-31T00:00:00+00:00</published><updated>2024-07-17T00:00:00+01:00</updated><id>https://shihling.com/portfolio/2022/hscapstone</id><content type="html" xml:base="https://shihling.com/portfolio/2022/hscapstone"><![CDATA[<h2 id="overview">Overview</h2>
+<ul>
+  <li><strong>Category:</strong> Course Project</li>
+  <li><strong>Course:</strong> Grade 12 Capstone</li>
+  <li><strong>Time:</strong> Sep 2021 - Jan 2022</li>
+  <li><strong>Project Website:</strong> <a href="https://hscapstone.shihling.com" target="_blank">hscapstone.shihling.com</a></li>
+</ul>
+
+<h2 id="description">Description</h2>
+<p>A self-directed project exploring the potential applications of a microcontroller using a Raspberry Pi Pico as a personal introduction to hardware computing.</p>]]></content><author><name>Shih-Ling Shen</name></author><category term="Portfolio" /><category term="2021-project" /><category term="2022-project" /><category term="course-project" /><summary type="html"><![CDATA[A self-directed project exploring the potential applications of a microcontroller using a Raspberry Pi Pico as a personal introduction to hardware computing.]]></summary></entry></feed>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Setting up VMware Workstation on Debian/Ubuntu - Shih-Ling Shen</title>
+  <meta name="description" content="Downloading and Installing VMware Workstation">
+  <link rel="stylesheet" href="/assets/styles/core.css?v=20260411234733">
+  <link rel="stylesheet" href="/assets/styles/fontello.css?v=20260411234733">
+  <link rel="stylesheet" href="/assets/styles/highlighting/github.css?v=20260411234733">
+
+  <link rel="canonical" href="https://shihling.com/blog/2026/vmware-workstation">
+  <link rel="alternate" type="application/rss+xml" title="Shih-Ling Shen" href="/feed.xml">
+
+  <link href="https://shihling.com/favicon.ico" rel="icon">
+  <link href="https://shihling.com/favicon.ico" rel="apple-touch-icon">
+</head>
+
+  <body>
+
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <br>
+<nav class="site-nav">
+  <a style="font-size:20px" class="page-link" href="/" >Home</a>
+  <a style="font-size:20px" class="page-link" href="/blog/" >Blog</a>
+  <a style="font-size:20px" class="page-link" href="/portfolio/" >Portfolio</a>
+  <a style="font-size:20px" class="page-link" href="/resume/" >Resume</a>
+</nav>
+
+<article class="post" lang="en" itemscope itemtype="http://schema.org/BlogPosting" ><header class="post-header">
+  <a style="font-size:26px" class="site-title" href="/">Shih-Ling Shen</a> / <a style="font-size:26px" class="site-title" href="/blog/">Blog</a>
+  <h1 class="post-title baseline-fix" itemprop="name headline">Setting up VMware Workstation on Debian/Ubuntu</h1>Last Updated: Apr 11, 2026
+</header>
+
+
+  <div class="post-content" itemprop="articleBody"> 
+    <h2>Table of Contents</h2>
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#downloading-and-installing-vmware-workstation">Downloading and Installing VMware Workstation</a></li>
+<li class="toc-entry toc-h2"><a href="#building-vmware-host-modules">Building VMware Host Modules</a></li>
+<li class="toc-entry toc-h2"><a href="#secure-boot-only-signing-the-vmware-host-modules">(Secure Boot Only) Signing the VMware Host Modules</a></li>
+</ul><h2 id="downloading-and-installing-vmware-workstation">
+<a class="anchor" href="#downloading-and-installing-vmware-workstation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloading and Installing VMware Workstation</h2>
+
+<p>Visit <a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion" target="_blank">VMware Workstation official webpage</a> and click on download now under VMware Workstation Pro for PC. This will take you to Broadcom’s support centre.</p>
+
+<p>Click on “Free Software Downloads available HERE” underneath the search box.</p>
+
+<p>Click on “VMware Workstation Pro” near the bottom of the page.</p>
+
+<p>Select the desired version, and download the .bundle file. Note that you may be prompted to agree to the Terms and Conditions and have to fill in contact information and address.</p>
+
+<p>Run the following command to install VMware Workstation. This example uses the 25H2u1 version, replace the filename with your own.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> ./VMware-Workstation-Full-25H2u1-25219725.x86_64.bundle
+</code></pre></div></div>
+
+<p>Follow the prompts to install.</p>
+
+<hr>
+
+<h2 id="building-vmware-host-modules">
+<a class="anchor" href="#building-vmware-host-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building VMware Host Modules</h2>
+
+<p>VMware Workstation requires two kernel modules (vmmon and vmnet) to be compiled against the current kernel to function. When VMware Workstation starts up and detects that these two kernel modules are not loaded, it will prompt you to compile and install it.</p>
+
+<p>If the automatic installation fails, it is possible to manually install it with the tarballs that ship with the VMware Workstation. This can also be found in the <a href="https://wiki.debian.org/VMware" target="_blank">VMware page in the Debian Wiki</a>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su root <span class="c"># need to have root previlige to modify system files</span>
+<span class="nb">cd</span> /usr/lib/vmware/modules/source
+<span class="nb">tar </span>xvf vmnet.tar
+<span class="nb">cd </span>vmnet-only
+make
+<span class="nb">cd</span> ..
+<span class="nb">tar </span>xvf vmmon.tar
+<span class="nb">cd </span>vmmon-only
+make
+<span class="nb">cd</span> ..
+<span class="nb">cp </span>vmmon.o /lib/modules/<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/kernel/drivers/misc/vmmon.ko
+<span class="nb">cp </span>vmnet.o /lib/modules/<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/kernel/drivers/misc/vmnet.ko
+<span class="nb">sudo </span>depmod <span class="nt">-a</span>
+</code></pre></div></div>
+
+<p>Finally, reboot your device and VMware Workstation should detect the modules are loaded.</p>
+
+<p><strong>Note:</strong> The two modules may need to be re-compiled and re-installed everytime the kernel is updated.</p>
+
+<hr>
+
+<h2 id="secure-boot-only-signing-the-vmware-host-modules">
+<a class="anchor" href="#secure-boot-only-signing-the-vmware-host-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>(Secure Boot Only) Signing the VMware Host Modules</h2>
+
+<p>When Secure Boot is enabled, the self-built kernel modules will not load. To fix this, the kernel modules must be signed with a openssl key. This is documented in a <a href="https://knowledge.broadcom.com/external/article?legacyId=2146460" target="_blank">Broadcom Support article</a>.</p>
+
+<p>To sign the modules, first create a keypair using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl req <span class="nt">-new</span> <span class="nt">-x509</span> <span class="nt">-newkey</span> rsa:2048 <span class="nt">-keyout</span> MOK.priv <span class="nt">-outform</span> DER <span class="nt">-out</span> MOK.der <span class="nt">-nodes</span> <span class="nt">-days</span> 36500 <span class="nt">-subj</span> <span class="s2">"/CN=VMware/"</span>
+</code></pre></div></div>
+
+<p>Next, import the key to the MOK list using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mokutil <span class="nt">--import</span> MOK.der
+</code></pre></div></div>
+
+<p>Sign the two modules using the following command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> /usr/src/linux-headers-<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/scripts/sign-file sha256 ./MOK.priv ./MOK.der <span class="si">$(</span>modinfo <span class="nt">-n</span> vmmon<span class="si">)</span>
+<span class="nb">sudo</span> /usr/src/linux-headers-<span class="sb">`</span><span class="nb">uname</span> <span class="nt">-r</span><span class="sb">`</span>/scripts/sign-file sha256 ./MOK.priv ./MOK.der <span class="si">$(</span>modinfo <span class="nt">-n</span> vmnet<span class="si">)</span>
+</code></pre></div></div>
+
+<p>After rebooting, the kernel module should be loaded and VMware Workstation should work as expected.</p>
+
+<p><strong>Note:</strong> Only the final step need to be repeated everytime the kernel modules are re-compiled and re-installed.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-meta"> <time datetime="2026-02-06T00:00:00+00:00" itemprop="datePublished">Feb 6, 2026</time> by <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">Shih-Ling Shen</span></span>
+    </div>
+  </footer>
+
+</article>
+
+    </div><script type="text/javascript">
+  (function () {
+    var resize = function () {
+      this.width = 0.5 * (this.naturalWidth || this.width);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".half-size, .retina2x"), function(el) {
+      if (el.naturalWidth) {
+        resize.call(el);
+      } else {
+        el.onload = resize;
+      }
+    });
+  })();
+</script>
+
+  </main><footer class="site-footer">
+
+  <div class="wrapper">
+    <div class="social-links">
+      <a class="social-link social-email" href="mailto:%73%68%69%68%6C%69%6E%67@%73%68%69%68%6C%69%6E%67.%63%6F%6D" target="_blank">
+        <i class="icon-mail"></i>
+      </a>
+      <a class="social-link social-github" href="https://github.com/shihlings" target="_blank">
+        <i class="icon-github"></i>
+      </a>
+      <a class="social-link social-linkedin" href="https://linkedin.com/in/shih-ling-shen" target="_blank">
+        <i class="icon-linkedin"></i>
+      </a>
+    </div>
+    <div class="credits">
+      &copy; 2026 Shih-Ling. All rights reserved.<br>
+      Theme: <a href="https://github.com/kamikat/jekyll-theme-kagami" target="_blank">KAGAMI</a><br>
+      Version: v.1.6.0 (1775947653)
+    </div>
+  </div>
+
+</footer>
+<script>
+  (function(elements) {
+    var elements = Array.prototype.slice.call(document.getElementsByClassName('baseline-fix'));
+    for (var i = 0; i != elements.length; i++) {
+      var el = elements[i];
+      el.innerHTML = el.innerHTML.replace(/[\u2000-\u206e⸀-\u2e7e⺀-\u2efe⼀-\u2fde⿰-\u2ffe\u3000-〾\u3040-ゞ゠-ヾ\u3100-\u312e\u3130-ㆎ㆐-㆞ㆠ-\u31be㇀-\u31eeㇰ-ㇾ㈀-㋾㌀-㏾㐀-\u4dbe一-\u9ffe\ua960-\ua97e가-\ud7ae\ud7b0-\ud7fe豈-\ufafe︰-﹎\uff00-￮]|[\ud840-\ud868\ud86a-\ud86c][\udc00-\udfff]|\ud82c[\udc00-\udcfe]|\ud869[\udc00-\udede\udf00-\udfff]|\ud86d[\udc00-\udf3e\udf40-\udfff]|\ud86e[\udc00-\udc1e]|\ud87e[\udc00-\ude1e]/g, function (ch) {
+        return '<span class="baseline-fix-block">' + ch + '<' + '/span>';
+      });
+      el.classList.remove('baseline-fix');
+    }
+  })(Array.prototype.slice.call(document.getElementsByClassName('baseline-fix')));
+</script>
+
+
+</body>
+
+</html>
