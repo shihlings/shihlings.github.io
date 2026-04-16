@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://shihling.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://shihling.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-04-16T01:46:01+01:00</updated><id>https://shihling.com/feed.xml</id><title type="html">Shih-Ling Shen</title><subtitle>Shih-Ling&apos;s Personal Website.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://shihling.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://shihling.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-04-16T03:26:03+01:00</updated><id>https://shihling.com/feed.xml</id><title type="html">Shih-Ling Shen</title><subtitle>Shih-Ling&apos;s Personal Website.
 </subtitle><entry><title type="html">Setting up VMware Workstation on Debian/Ubuntu</title><link href="https://shihling.com/blog/2026/vmware-workstation" rel="alternate" type="text/html" title="Setting up VMware Workstation on Debian/Ubuntu" /><published>2026-02-06T00:00:00+00:00</published><updated>2026-04-11T00:00:00+01:00</updated><id>https://shihling.com/blog/2026/vmware-workstation</id><content type="html" xml:base="https://shihling.com/blog/2026/vmware-workstation"><![CDATA[<h2 id="downloading-and-installing-vmware-workstation">Downloading and Installing VMware Workstation</h2>
 
 <p>Visit <a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion" target="_blank">VMware Workstation official webpage</a> and click on download now under VMware Workstation Pro for PC. This will take you to Broadcom’s support centre.</p>
@@ -77,7 +77,7 @@ make
 </ul>
 
 <h2 id="description">Description</h2>
-<p>A student design team at the University of British Columbia focusing on the design and construction of autonomous sailboats. We are currently building a fully autonomous research vessel from scratch to collect oceanic and atmospheric data in extreme environments for marine researchers. For more information about my role at UBC Sailbot, please visit <a href="/resume">the resume section</a>.</p>
+<p>A student design team at the University of British Columbia focusing on the design and construction of autonomous sailboats. We are currently building a fully autonomous research vessel from scratch to collect oceanic and atmospheric data in extreme environments for marine researchers. For more information about my role at UBC Sailbot, please visit <a href="/resume/">the resume section</a>.</p>
 
 <h2 id="photo-gallery">Photo Gallery</h2>
 <p style="text-align:center;"><img src="/portfolio/assets/sailbot/team24.jpg" alt="Full Team Photo (March 2024)" />
